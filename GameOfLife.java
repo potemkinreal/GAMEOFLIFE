@@ -4,10 +4,13 @@ public class GameOfLife implements Board {
 
     // Integers: 0 or 1 for alive or dead
     private int[][] board;
+    private int[][] genAlpha;
 
     public GameOfLife(int x, int y)
     {
-        // Construct a 2d array of the given x and y size.
+        board = new int[x][y];
+        genAlpha = new int[x][y];
+
     }
 
     // Set values on the board
@@ -17,27 +20,76 @@ public class GameOfLife implements Board {
                 board[i + x][j + y] = data[i][j];
             }
         }
+        print();
     }
 
     // Run the simulation for a number of turns
     public void run(int turns) {
-        // call step the number of times requested
+        int currentStep = 1;
+        while(currentStep <= turns){
+            step();
+            currentStep++;
+        }
+
     }
 
     // Step the simulation forward one turn.
     public void step()
     {
+
+        for (int i =0; i< board.length; i++){
+            for (int j=0; j< board[0].length; j++){
+                int neighbors = countNeighbors(i, j);
+
+                if(neighbors<2){
+                    genAlpha[i][j] = 0;
+                }
+                else if((neighbors==2 || neighbors==3) && board[i][j]==1){
+                    genAlpha[i][j]= 1;
+                }
+                else if (neighbors ==3 && board[i][j]==0){
+                    genAlpha[i][j]=1;
+                }
+                else if(neighbors>3){
+                    genAlpha[i][j]=0;
+                }
+            }
+        }
+        board = genAlpha;
         print();
-        // Update the game board, store a 1 if the cell is alive and a 0 otherwise.
+        
     }
 
 
     public int countNeighbors(int x, int y) {
-        int count = 0;
-        // count the number of neighbors the cell has
-        // use the get(x,y) method to read any board state you need.
+        int count=0;
+        if(get(x-1,y-1)==1){
+            count++;
+        }
+        if(get(x-1,y)==1){
+            count++;
+        }
+        if(get(x-1,y+1)==1){
+            count++;
+        }
+        if(get(x,y-1)==1){
+            count++;
+        }
+        if(get(x,y+1)==1){
+            count++;
+        }
+        if(get(x+1,y-1)==1){
+            count++;
+        }
+        if(get(x+1,y)==1){
+            count++;
+        }
+        if(get(x+1,y+1)==1){
+            count++;
+        }
         return count;
     }
+
 
     // Get a value from the board with "wrap around"
     // Locations outside the board will loop back into the board.
